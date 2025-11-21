@@ -22,16 +22,18 @@ export const generateUser = async (): Promise<RegisteredUser> =>
     demo: true,
   });
 
-export const generateArticle = async (id: number) =>
-  createArticle(
+export const generateArticle = async (id: number) => {
+  const uniqueTitle = `${randPhrase()} ${Date.now()}-${Math.random().toString(36).substring(7)}`;
+  return createArticle(
     {
-      title: randPhrase(),
+      title: uniqueTitle,
       description: randParagraph(),
       body: randLines({ length: 10 }).join(' '),
       tagList: randWord({ length: 4 }),
     },
     id,
   );
+};
 
 export const generateComment = async (id: number, slug: string) =>
   addComment(randParagraph(), slug, id);
@@ -43,7 +45,12 @@ const main = async () => {
 
     // eslint-disable-next-line no-restricted-syntax
     for await (const user of users) {
-      const articles = await Promise.all(Array.from({length: 12}, () => generateArticle(user.id)));
+      // Create articles sequentially to avoid tag race conditions
+      const articles = [];
+      for (let i = 0; i < 12; i++) {
+        const article = await generateArticle(user.id);
+        articles.push(article);
+      }
 
       // eslint-disable-next-line no-restricted-syntax
       for await (const article of articles) {
