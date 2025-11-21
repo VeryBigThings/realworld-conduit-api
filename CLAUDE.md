@@ -47,7 +47,7 @@ This is a TypeScript/Express.js backend implementation of the RealWorld Conduit 
 ```bash
 docker run -e "POSTGRES_PASSWORD=RealWorldPass123!" \
   -e "POSTGRES_DB=conduit" \
-  -p 5432:5432 --name postgres-workshop-ts -d \
+  -p 5432:5432 --name workshop-db-ts -d \
   postgres:16-alpine
 ```
 
@@ -288,13 +288,13 @@ src/
 ### Database Connection Issues
 ```bash
 # Check PostgreSQL is running
-docker ps | grep postgres-workshop-ts
+docker ps | grep workshop-db-ts
 
 # Check logs
-docker logs postgres-workshop-ts
+docker logs workshop-db-ts
 
 # Restart container
-docker restart postgres-workshop-ts
+docker restart workshop-db-ts
 ```
 
 ### Port Conflicts
